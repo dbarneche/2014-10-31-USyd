@@ -12,12 +12,14 @@ latlng: -33.887526,151.190262
 registration: restricted
 instructor: ["Diego Barneche", "Philipp Bayer", "Dan Warren"]
 helper: ["Sarah McIntyre"]
-contact: diego.barneche@mq.edu.au
+instructor_contact: diego.barneche@mq.edu.au
+host_contact: alex.holcombe@sydney.edu.au
 ---
 <h2>General Information</h2>
 
 <p>
-  This intensive 2-day <a href="//software-carpentry.org">Software Carpentry</a> bootcamp will introduce attendees to a range of computing skills aimed at making them more productive and efficient in their work. A substantial focus of the workshop will be on improving programming skills in R, but will also include topics on version control, using the shell, and reproducible research. Short tutorials will alternate with hands-on practical exercises. Participants will be encouraged both to help one another, and to apply what they have learned to their own research problems during and between sessions.
+  This intensive 2-day <a href="//software-carpentry.org">Software Carpentry</a> bootcamp will introduce attendees to a range of computing skills aimed at making them more productive and efficient in their work. This will include an introduction to R. It is not designed to teach students to calculate specific statistics in R (although a few basic examples will be covered), rather it is mainly about better coding practices that one should be able to apply to different programming environments.
+  The bootcamp will also cover version control, using the shell, and reproducible research. Short tutorials will alternate with hands-on practical exercises. Participants will be encouraged both to help one another, and to apply what they have learned to their own research problems during and between sessions.
 </p>
 
 <!-- This block displays the instructors' names if they are available. -->
@@ -42,8 +44,8 @@ contact: diego.barneche@mq.edu.au
     or if specialized prerequisite knowledge is required, please mention that.
 -->
 <p>
-  <strong>Who:</strong>
-  The bootcamp is targeted at postgraduate students and other researchers in Psychology. This course will cover a thorough introduction to the R language, however it is not a stats course - it is about better coding practices that one should be able to apply to different programming environments. Yet, some few basic examples on stats and plotting will be presented as case studies. If you have never used/seen R before, please don't let that scare you off - if you'd like to attend this course, working through the online material covered in <a href="http://nicercode.github.io/modules/#introduction-to-r-macquarie-university-2013">'Day 1' of the NiceR code 'Introduction to R'</a> will get you up to speed!
+  <strong>Should you sign up?</strong>
+  The bootcamp is targeted at postgraduate students and other researchers in Psychology. No previous programming experience is required. However, most students are likely to have a bit of programming experience, if not in a proper language, then at least with scripting as in SPSS or HTML, which will affect the pace of the instruction. We therefore recommend that if you have no programming experience you work through the online material covered in <a href="http://nicercode.github.io/modules/#introduction-to-r-macquarie-university-2013">'Day 1' of the NiceR code 'Introduction to R'</a>.
 </p>
 
 <!--
@@ -74,14 +76,24 @@ contact: diego.barneche@mq.edu.au
     If one hasn't, this block inserts the generic contact address for Software Carpentry.
 -->
 <p>
-  <strong>Contact</strong>:
-  Please mail
-  {% if page.contact %}
-    <a href='mailto:{{page.contact}}'>{{page.contact}}</a>
+  <strong>Content contact</strong>:
+  For more information about the content, email
+  {% if page.instructor_contact %}
+    <a href='mailto:{{page.instructor_contact}}'>{{page.contact}}</a>
   {% else %}
     <a href='mailto:{{site.contact}}'>{{site.contact}}</a>
   {% endif %}
-  for more information.
+</p>
+
+<!--
+    This block automatically inserts a contact email address for the host.
+-->
+<p>
+  <strong>Host contact</strong>:
+  For information about practicalities and attendance, email
+  {% if page.host_contact %}
+    <a href='mailto:{{page.host_contact}}'>{{page.contact}}</a>
+  {% endif %}
 </p>
 
 <hr/>
@@ -93,7 +105,7 @@ contact: diego.barneche@mq.edu.au
 
 <div class="row-fluid">
   <div class="span6">
-    <h3>Day 1</h3>
+    <h3>Friday, 31 October</h3>
     <table class="table table-striped">
       <tr> <td>09:00 - 10:00</td> <td>Introduction to R + Rstudio</td> </tr>
       <tr> <td><em>10:00 - 10:15</em></td> <td><em>Tea break</em></td> </tr>
@@ -107,7 +119,7 @@ contact: diego.barneche@mq.edu.au
     </table>
   </div>
   <div class="span6">
-    <h3>Day 2</h3>
+    <h3>Saturday, 1 November</h3>
     <table class="table table-striped">
       <tr> <td>09:00 - 10:15</td> <td>Basic shell scripting</td> </tr>
       <tr> <td><em>10:15 - 10:30</em></td> <td><em>Tea break</em></td> </tr>
