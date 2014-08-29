@@ -12,8 +12,8 @@ latlng: -33.887526,151.190262
 registration: restricted
 instructor: ["Diego Barneche", "Philipp Bayer", "Dan Warren"]
 helper: ["Sarah McIntyre"]
-instructor_contact: diego.barneche@mq.edu.au
-host_contact: alex.holcombe@sydney.edu.au
+instructorcontact: diego.barneche@mq.edu.au
+hostcontact: alex.holcombe@sydney.edu.au
 ---
 <h2>General Information</h2>
 
@@ -78,8 +78,8 @@ host_contact: alex.holcombe@sydney.edu.au
 <p>
   <strong>Content contact</strong>:
   For more information about the content, email
-  {% if page.instructor_contact %}
-    <a href='mailto:{{page.instructor_contact}}'>{{page.contact}}</a>
+  {% if page.instructorcontact %}
+    <a href='mailto:{{page.instructorcontact}}'>{{page.instructorcontact}}</a>
   {% else %}
     <a href='mailto:{{site.contact}}'>{{site.contact}}</a>
   {% endif %}
@@ -91,8 +91,8 @@ host_contact: alex.holcombe@sydney.edu.au
 <p>
   <strong>Host contact</strong>:
   For information about practicalities and attendance, email
-  {% if page.host_contact %}
-    <a href='mailto:{{page.host_contact}}'>{{page.contact}}</a>
+  {% if page.hostcontact %}
+    <a href='mailto:{{page.hostcontact}}'>{{page.hostcontact}}</a>
   {% endif %}
 </p>
 
