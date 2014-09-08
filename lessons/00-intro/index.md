@@ -13,7 +13,7 @@ tutor: Diego
 - **Who we are:** Software Carpentry is a volunteer organization previously supported by the Alfred P. Sloan Foundation and the Mozilla Foundation, currently part of the [Mozilla Science Lab](http://mozillascience.org/).
 - **Boot camps:** Our boot camps cover the core skills every scientist needs to get more done in less time: program construction, version control, testing, the command line, and data management. Short lessons alternate with hands-on practical sessions for two full days
 
-This boot camp was organised by Associate Professor Alex Holcombe and sponsored by the. Thanks everyone!
+This boot camp was organised by Associate Professor Alex Holcombe and sponsored by the School of Psychology, University of Sydney. Thanks everyone!
 
 ## The problem
 
