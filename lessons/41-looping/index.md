@@ -177,6 +177,45 @@ for (i in 1:nrep)
 
 ![plot of chunk random_walks](figure/random_walks.png)
 
+## While loops - I don't know how far I'm going, but I'll recognise it when I get there
+
+Sometimes you will find yourself needing to repeat an operation until a certain condition is met, rather than doing it for a specific number of times.  In some cases you might be able to hack something together using a `for` loop, but usually you'd be much better off using a `while` loop instead.  `While` loops look and act a lot like `for` loops, but instead of saying: 
+
+```r
+for(this number of repetitions){
+  do a thing
+}
+```r
+
+You instead say:
+
+```r
+while(this condition is true){
+  do a thing
+} 
+```r
+
+Let's try an example, shall we?  We'll try to come up with some simple code that generates random numbers between 0 and 1 until it gets one that's less than 0.1.  
+
+```r
+while(z > 0.1){
+  z <- runif(1)
+  print(z)
+}
+```r
+
+But wait, that doesn't work!  What's the problem?
+
+The problem is that we haven't defined `z`, and so the very first time the while loop's condition is checked (`z > 0.1`), `while` just says "Okay, that's not true so I'm not going to execute this block of code".  The same thing would have happened if we defined `z` to be anything less than 0.1.  Let's fix it.
+
+```r
+z <- 1
+while(z > 0.1){
+  z <- runif(1)
+  print(z)
+}
+```r
+
 ## Acknowledgements
 
-This material was developed by Daniel Falster and Rich FitzJohn and modified by Diego Barneche. Based on material prepared by Karthik Ram and Hadley Wickam.
+This material was developed by Daniel Falster and Rich FitzJohn and modified by Diego Barneche and Dan Warren. Based on material prepared by Karthik Ram and Hadley Wickam.

@@ -35,27 +35,27 @@ This function takes `number` as an argument and returns twice `number` as a valu
 
 The bit in the brackets is the "body" of the function; it is evaluted every time that the function is called.  The body of the function can contain any valid R expression.
 
-Whatever is used as an *argument* to this  function becomes `value` within the body of the function.  So
+Whatever is used as an *argument* to this  function becomes `number` within the body of the function.  So
 
 ```
 z <- 10
 double(z)
 ```
 
-returns 20.  It does not matter at all if a variable called `value` exists in the global environment
+returns 20.  It does not matter at all if a variable called `number` exists in the global environment
 
 ```
 z     <- 10
-value <- 1
+number <- 1
 double(z) # 20
-value     # still 1
+number     # still 1
 ```
 
 This is one of the main uses of functions: they isolate different variables within your program.  This makes it easier to think about what you are doing.  It also lets you forget about things you don't want to think about - we could have implemented `double` differently:
 
 ```
-double <- function(value) {
-  value + value
+double <- function(number) {
+  number + number
 }
 ```
 
@@ -252,7 +252,7 @@ plot(lifeExp ~ gdpPercap, data.1982, log="x", cex=cex, col='black', bg=col, pch=
 
 Let's say we want to add a linear trendline to the plot.
 
-*(This example is a bit tricky; R's formula (`y ~ x`) does lots of magic work in finding it's targets, and wrapping this up with functions can be a bit hard.)*
+*(This example is a bit tricky; R's formula (`y ~ x`) does lots of magic work in finding its targets, and wrapping this up with functions can be a bit hard.)*
 
 ```r
 add.trend.line <- function(x, y, d, ...) {
