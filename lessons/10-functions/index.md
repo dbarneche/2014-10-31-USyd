@@ -20,46 +20,19 @@ use functions in their code. Where people do use functions, they don't
 use them enough, or try to make their functions do too much at once.
 
 R has many built in functions, and you can access many more by
-installing new packages. So there's no-doubt you already *use*
-functions. But what about writing your own?
-
-Writing functions is simple. Paste the following code into your console
+installing new packages. For instance, when you take the mean of a vector
 
 ```r
-double <- function(number) {
-  2 * number
-}
+v <- c(1,2,3,4,5)
+mean(v)
 ```
 
-This function takes `number` as an argument and returns twice `number` as a value (i.e., it doubles a number).
+you are calling a function named `mean` using the argument `v`.
 
-The bit in the brackets is the "body" of the function; it is evaluted every time that the function is called.  The body of the function can contain any valid R expression.
+So there's no-doubt you already *use*
+functions. But what about writing your own?
 
-Whatever is used as an *argument* to this  function becomes `number` within the body of the function.  So
-
-```
-z <- 10
-double(z)
-```
-
-returns 20.  It does not matter at all if a variable called `number` exists in the global environment
-
-```
-z     <- 10
-number <- 1
-double(z) # 20
-number     # still 1
-```
-
-This is one of the main uses of functions: they isolate different variables within your program.  This makes it easier to think about what you are doing.  It also lets you forget about things you don't want to think about - we could have implemented `double` differently:
-
-```
-double <- function(number) {
-  number + number
-}
-```
-
-but this detail is abstracted away.
+Writing functions is simple. 
 
 The procedure for using functions in your work involves three key steps:
 
@@ -67,60 +40,100 @@ The procedure for using functions in your work involves three key steps:
 2. Load the function into the R session,
 3. Use the function.
 
-## Means, variances, skewness
+Paste the following code into your console
 
-As a simple starting point, let's re-implement some functions that are already in R to compute means and variances, and then extend this to compute the skewness of a distribution.
-
-**NB**: This material is designed to teach *functions*, not necessarily the best way of doing this analysis.  In some cases there are existing functions that would be much nicer to use in place of those that we will write.  But the universe of functions in R is absolutely *massive*, so you'll often find yourself rewriting things that exist in some package, or even in the base system.  One nice thing about having written things as functions though, is that it is then easy to swap out your version for a better version (sometimes involving some wrapping).
-
-We're going to use some data from gapminder - this is available in the lesson material (see top of page), alternatively you can download from [here](https://github.com/nicercode/gapminder/archive/d4f943d8ca15c2f6572ec52c74987e0f1971e64c.zip) and unzip into the directory that you are using.
-
-```
-data <- read.csv("gapminder-FiveYearData.csv", stringsAsFactors=FALSE)
+```r
+double <- function(number) {
+  new.number <- 2 * number
+  return(new.number)
+}
 ```
 
-This is pretty big, so grab just the data from 1982:
+This function takes `number` as an argument and returns twice `number` as a value (i.e., it doubles a number).
 
+The bit in the brackets is the "body" of the function; it is evaluted every time that the function is called.  The body of the function can contain any valid R expression.
+
+In this example we have explicitly told R to `return` a value.  However, if you don't explicitly `return` something, R will assume that it should return the very last thing it did in a function.  As a result, we could have just said
+
+```r
+double <- function(number) {
+  2 * number
+}
 ```
-data.1982 <- data[data$year == 1982,]
+which is functionally identical.  Most R programmers don't use `return` explicitly, and just rely on the default behaviour of R.
+
+Whatever is used as an *argument* to this  function becomes `number` within the body of the function.  So
+
+```r
+z <- 10
+double(z)
 ```
 
-**Exercise**: Write a function that computes the mean of the data, and use it to compute the mean of the `gdpPercap` column and the `pop` column.  Perhaps call this function `average` to avoid colliding with the R function `mean`.
+returns 20.  It does not matter at all if a variable called `number` exists in the global environment
 
-**Instructors:** See exercises.R for potential solutions.
+```r
+z     <- 10
+number <- 1
+double(z) # 20
+number     # still 1
+```
 
-**Exercise** Sample variance is defined as
+This is one of the main uses of functions: they isolate different variables within your program.  This makes it easier to think about what you are doing.  What would you do if you did want to put the value of `double` into `number` in the global environment?
 
-![](variance.png)
+```r
+z <- 10
+number <- 1
+number <- double(z)
+number    # number is now 2
+```
 
-Write a function that computes sample variance and run it on the same columns as before.  Perhaps call this function `variance` to avoid colliding with the R function `var`.
+Functions also let you forget about things you don't want to think about - we could have implemented `double` differently:
 
-**Exercise** Skewness can be defined as
+```r
+double <- function(number) {
+  number + number
+}
+```
 
-![](skew.png)
+but this detail is abstracted away.
 
-Write a function that computes skewness.  This might be best to do in several steps.  Call this whatever you want, because R does not have a built-in function to do this!  Compute the skewness of the same columns as before.
+To create or call a function with multiple arguments, you separate arguments with commas, e.g.,
+
+```r
+addtwo <- function(x,y){
+  x+y
+}
+```
+## 
+
+**Exercise**
+
+Write a function that takes two numbers (x and y) as an argument and:
+1. Prints the numbers
+2. Prints the sum of the two numbers
+3. Prints log x base y
+4. Returns the phrase "Writing functions is easy!"
+
+Run your function.  What happens with the return value?  What happens when you assign the output of that function to a variable?
 
 ## Defining a function (more theory)
 
-Functions can have more than one argument.  You can see how any function is defined by using the `args` function.  For example:
+You can write a function with any number of arguments. These can be any R object: numbers, strings, arrays, data frames, or even pointers to other functions; anything that is needed
+for the function to run.  You can see how any function is defined by using the `args` function.  For example:
 
-```
+```r
 args(colSums)
 ```
 
 produces
 
-```
+```r
 function(x, na.rm = FALSE, dims = 1L)
 NULL
 ```
 
 **x, na.rm, dims**: these are the `arguments` of this function, also
-called `formals`. You can write a function with any number of
-arguments. These can be any R object: numbers, strings, arrays, data
-frames, of even pointers to other functions; anything that is needed
-for the function.name function to run.
+called `formals`. 
 
 **default arguments**: Some arguments have default values specified (here, `na.rm` and `dims`). Arguments without a default generally need to have a value supplied for the function to run. You do not need to provide a value for those arguments with a default, as the function will use the default value.
 
@@ -143,6 +156,42 @@ return a number, or a list.  There is a `return` function in R, but it is typica
 * Can be passed as arguments to other functions or returned
   from other functions.
 
+## Means, variances, skewness
+
+Let's get a little more advanced and re-implement some functions that are already in R to compute means and variances, and then extend this to compute the skewness of a distribution.
+
+**NB**: This material is designed to teach *functions*, not necessarily the best way of doing this analysis.  In some cases there are existing functions that would be much nicer to use in place of those that we will write.  But the universe of functions in R is absolutely *massive*, so you'll often find yourself rewriting things that exist in some package, or even in the base system.  One nice thing about having written things as functions though, is that it is then easy to swap out your version for a better version (sometimes involving some wrapping).
+
+We're going to use some data from gapminder - this is available in the lesson material (see top of page), alternatively you can download from [here](https://github.com/nicercode/gapminder/archive/d4f943d8ca15c2f6572ec52c74987e0f1971e64c.zip) and unzip into the directory that you are using.
+
+```r
+data <- read.csv("gapminder-FiveYearData.csv", stringsAsFactors=FALSE)
+```
+
+This is pretty big, so grab just the data from 1982:
+
+```r
+data.1982 <- data[data$year == 1982,]
+```
+
+**Exercise**: Write a function that computes the mean of the data, and use it to compute the mean of the `gdpPercap` column and the `pop` column.  Perhaps call this function `my.mean` to avoid colliding with the R function `mean`.
+
+**Instructors:** See exercises.R for potential solutions.
+
+**Exercise** Sample variance is defined as
+
+![](variance.png)
+
+Write a function that computes sample variance and run it on the same columns as before.  Perhaps call this function `my.var` to avoid colliding with the R function `var`.
+
+**Exercise** Skewness can be defined as
+
+![](skew.png)
+
+Write a function that computes skewness.  This might be best to do in several steps.  Call this whatever you want, because R does not have a built-in function to do this!  Compute the skewness of the same columns as before.
+
+
+
 ## Functions make life a lot easier
 
 Now we're going to use data from the gapminder project, which gathers together a wide arrange of metrics for countries of the world. We're going to use a subset of data from this project which includes average life expectancy and GDP per capita on 5-year intervals from last 50 years. This is [a nice plot of the data](http://www.gapminder.org/world/#$majorMode=chart$is;shi=t;ly=2003;lb=f;il=t;fs=11;al=54;stl=t;st=t;nsl=t;se=t$wst;tts=C$ts;sp=5.59290322580644;ti=1983$zpv;v=0$inc_x;mmid=XCOORDS;iid=phAwcNAVuyj1jiMAkmq1iMg;by=ind$inc_y;mmid=YCOORDS;iid=phAwcNAVuyj2tPLxKvvnNPA;by=ind$inc_s;uniValue=8.21;iid=phAwcNAVuyj0XOoBL_n5tAQ;by=ind$inc_c;uniValue=255;gid=CATID0;by=grp$map_x;scale=log;dataMin=283;dataMax=110808$map_y;scale=lin;dataMin=18;dataMax=87$map_s;sma=75;smi=2.65$cd;bd=0$inds=;modified=75) that we're going to work towards recreating in R.
@@ -157,8 +206,10 @@ plot(lifeExp ~ gdpPercap, data.1982, log="x")
 Plot the points so that their radius is proportional to population size:
 
 
-```r
+
 ## Scale on to [0,1]
+
+```r
 p <- (data.1982$pop - min(data.1982$pop)) /
   (max(data.1982$pop) - min(data.1982$pop))
 ## Convert to [0.2, 10]
@@ -242,9 +293,9 @@ captures intent better.
 
 
 ```r
-col <- colour.by.category(data.1982$continent, col.table)
+colour <- colour.by.category(data.1982$continent, col.table)
 cex <- rescale(sqrt(data.1982$pop), c(0.2, 10))
-plot(lifeExp ~ gdpPercap, data.1982, log="x", cex=cex, col='black', bg=col, pch=21, lwd=0.5, las=1)
+plot(lifeExp ~ gdpPercap, data.1982, log="x", cex=cex, col='black', bg=colour, pch=21, lwd=0.5, las=1)
 ```
 
 ![plot of chunk scaled_coloured](figure/scaled_coloured.png)

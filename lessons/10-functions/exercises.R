@@ -1,8 +1,8 @@
 # Simple functions:
-average <- function(x) {
+my.mean <- function(x) {
   sum(x) / length(x)
 }
-variance <- function(x) {
+my.var <- function(x) {
   sum((x - average(x))^2) / (length(x) - 1)
 }
 skew <- function(x) {
