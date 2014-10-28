@@ -46,6 +46,60 @@ for(i in v){
   print(i)
 }
 ```
+One of the most important issues with `for` loops is execution time.  Some operations can really slow down a for loop if they're done in every iteration.  For instance, take the following code:
+
+```r
+vec  <-  numeric()
+system.time(
+  for(i in seq_len(50000-1)) {
+    calculation  <-  sqrt(i + (i+1)/10)
+    vec  <-  c(vec, calculation)
+  }  
+)
+```
+
+###    user  system elapsed 
+###    5.510   0.588   6.098 
+
+That takes about five and a half seconds to run.  It turns out that most of that time is taken up with the concatenation step.  If we get rid of that step by allocating a vector of the correct size to start with and accessing elements of that vector directly, it runs much faster.
+
+```r
+iter  <-  50000
+vec  <-  numeric(length=iter)
+system.time(
+  for(i in seq_len(iter-1)) {
+    calculation  <-  sqrt(i + (i+1)/10)
+    vec[i]           <-  calculation
+  }
+)
+```
+
+###   user  system elapsed 
+###   0.091   0.002   0.092 
+
+That took about 1/6 as long to do the same thing!  We can shave off even more time by removing the `calculation` variable and allocating the results of each step directly to the vector with no intermediaries.
+
+```r
+iter  <-  50000
+vec   <-  numeric(length=iter)
+system.time(
+    for(i in seq_len(iter-1)) {
+        vec[i] <- sqrt(i + (i)/10)
+    }
+)
+```
+###   user  system elapsed 
+###   0.077   0.001   0.078 
+
+This version even compares favorably with the execution time we achieve using apply!
+
+```r
+system.time(
+    sapply(seq_len(iter), function(x)sqrt(x + (x)/10))
+)
+```
+###   user  system elapsed 
+###   0.071   0.001   0.072 
 
 ## Nested for loops
 
