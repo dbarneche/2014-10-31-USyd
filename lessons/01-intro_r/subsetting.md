@@ -23,7 +23,7 @@ x <- c(5.4, 6.2, 7.1, 4.8, 7.5)
 
 **We can subset this in many ways**
 
-1. Using positive integers
+1\. Using positive integers
 
 ```
 x[1]  
@@ -34,7 +34,7 @@ x[c(1, 1)]
 x[c(2.1, 2.9)]  
 ```
 
-2. Using negative integers
+2\. Using negative integers
 
 ```
 # skip the first element  
@@ -43,7 +43,7 @@ x[-1]
 x[-c(1,5)]  
 ```
 
-3. Using logical operators
+3\. Using logical operators
 
 ```
 x[c(TRUE, TRUE, FALSE, FALSE)]
@@ -53,14 +53,14 @@ x[which(x >3)]
 Also see `which.max()` and `which.min()`
 ```
 
-4. with nothing
+4\. with nothing
 
 ```
 x[]
 # useful when dealing with 2 or higher dimensional objects
 ```
 
-5. with zero
+5\. with zero
 
 ```
 x[0]
@@ -68,7 +68,7 @@ x[0]
 ```
 
 
-6. Referencing objects by their names
+6\. Referencing objects by their names
 
 ```
 (y <- setNames(x, letters[1:4]))
@@ -101,7 +101,7 @@ x[1:5]
 
 To extract individual elements inside a list, use the `[[` operator
 
-```r
+```
 # to get element 5
 
 x[[5]]
@@ -138,7 +138,7 @@ a[0, -2]
 #      A C
 ```
 
-When you extract a single column or row, you get a vector out.  This is not always what is wanted, so the `drop` argument comes in useful
+When you extract a single column or row, you get a vector out. This is not always what is wanted, so the `drop` argument comes in useful
 
 ```
 a[1,,drop=FALSE]
@@ -147,7 +147,7 @@ a[1,]
 
 # Subsetting data frames
 
-```r
+```
 df <- data.frame(x = 1:3, y = 3:1, z = letters[1:3])
 
 df[df$x == 2, ]
@@ -183,7 +183,7 @@ df[, "x"]
 # [1] 1 2 3
 ```
 
-If you use the single bracket subset you get a new dataframe out.  If you use `$` or `[[` you get the contents of that column.  If the column does not exist, `$` will return `NULL` and `[[` will return an error.
+If you use the single bracket subset you get a new dataframe out.  If you use `$` or `[[` you get the contents of that column. If the column does not exist, `$` will return `NULL` and `[[` will return an error.
 
 ```
 v <- "x"
@@ -193,3 +193,39 @@ df$x # this does
 df$not_in_here # NULL
 df[["not_in_here"]] # error
 ```
+
+## Exercises
+
+1\. Fix each of the following common data frame subsetting errors:
+
+```
+# Extract cases where cyl is 4
+mtcars[mtcars$cyl = 4, ]
+
+# Exclude only rows 1 through 4
+mtcars[-1:4, ]
+
+# Return only rows for cylinders less than 5
+mtcars[mtcars$cyl <= 5]
+
+# Return only rows for cylinders that are 4 or 6.
+mtcars[mtcars$cyl == 4 | 6, ]
+```
+
+2\. Why does `mtcars[1:20]` return a error? How does it differ from the similar `mtcars[1:20, ]`?
+
+
+3\. R comes with a data set called `iris`;
+
+* How big is this dataset (number of rows and columns)?
+* Create a new `data.frame` called `small_diamonds` that only contains rows 1 through 9 and 19 through 23. You can do this in one or two steps.
+
+4\. Given a linear model
+
+```
+set.seed(10)
+dat <- data.frame(response=rnorm(30, mean=rep(c(2, 5, 10), each=10), sd=rep(0.1, 30)), factors=rep(LETTERS[1:3], each=10))
+mod <- aov(response ~ factors, data = dat)
+```
+
+Extract the residual degrees of freedom.

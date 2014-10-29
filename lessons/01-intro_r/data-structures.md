@@ -54,11 +54,12 @@ x <- vector()
 # with a pre-defined length
 x <- vector(length = 10)
 # with a length and type
-vector("character", length = 10)
-vector("numeric", length = 10)
-vector("integer", length = 10)
-vector("logical", length = 10)
+x <- vector("character", length = 10)
+x <- vector("numeric",   length = 10)
+x <- vector("integer",   length = 10)
+x <- vector("logical",   length = 10)
 ```
+
 The general pattern is `vector(class of object, length)`.  You can also create vectors by concatenating them using the `c()` function.
 
 Various examples:
@@ -66,6 +67,68 @@ Various examples:
 ```
 x <- c(1, 2, 3)
 ```
+
+This is a deep piece of engineering in the design; most of R thinks quite happily in terms of vectors. If you wanted to double all the values in the vector, just multiply it by 2:
+
+```
+2 * x
+```
+
+```
+## [1] 2 4 6
+```
+
+You can add scalars
+
+```
+x + 0.1
+```
+
+```
+## [1] 1.1 2.1 3.1
+```
+
+get the maximum value...
+
+```
+max(x)
+```
+
+```
+## [1] 3
+```
+
+...minimum value...
+
+```
+min(x)
+```
+
+```
+## [1] 1
+```
+
+...sum...
+
+```
+sum(x)
+```
+
+```
+## [1] 6
+```
+
+...mean value...
+
+```
+mean(x)
+```
+
+```
+## [1] 2
+```
+
+...and so on. There are huge numbers of functions that operate on vectors. It is more common that functions will than that they won't.
 
 x is a numeric vector. These are the most common kind. They are numeric objects and are treated as double precision real numbers. To explicitly create integers, add a `L` at the end.
 
@@ -133,7 +196,6 @@ seq(1, 10, by = 0.1)
  1/Inf
 # [1] 0
 ```
-
 
 `NaN` means Not a number. it's an undefined value.
 
@@ -271,7 +333,7 @@ What is the class of `x[1]`?
 how about `x[[1]]`?
 
 ```
-xlist <- list(a = "Rich FitzJohn", b = 1:10, data = head(iris))
+xlist <- list(a = "University of Sydney", b = 1:10, data = head(iris))
 ```
 
 what is the length of this object?
@@ -296,7 +358,7 @@ Elements are indexed by double brackets. Single brackets will still return anoth
 
 ## Factors
 
-Factors are special vectors that represent categorical data. Factors can be ordered or unordered and are important when for modelling functions such as `lm()` and `glm()` and also in plot methods.
+Factors are special vectors that represent categorical data. Factors can be ordered or unordered and are important when for modelling functions such as `aov()`, `lm()` and `glm()` and also in plot methods.
 
 Factors can only contain pre-defined values.
 
