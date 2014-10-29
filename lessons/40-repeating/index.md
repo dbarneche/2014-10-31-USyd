@@ -12,10 +12,7 @@ tutor: Diego
 **Materials**: If you have not already done so, please [download the lesson materials for this bootcamp](https://github.com/dbarneche/2014-10-31-USyd/raw/gh-pages/data/lessons.zip), unzip, then go to the folder `repeating`, and open (double click) on the file `repeating.Rproj` to open Rstudio.
 
 
-Previously we looked at how you can use functions to simplify your
-code. Ideally you have a function that performs a single
-operation, and now you want to use it many times to do the same operation on
-lots of different data. The naive way to do that would be something like this:
+Previously we looked at how you can use functions to simplify your code. Ideally you have a function that performs a single operation, and now you want to use it many times to do the same operation on lots of different data. The naive way to do that would be something like this:
 
 ```r
   res1 <-  f(input1)
@@ -24,52 +21,35 @@ lots of different data. The naive way to do that would be something like this:
   res10 <-  f(input10)
 ```
 
-But this isn't very *nice*. Yes, by using a function, you have reduced
-a substantial amount of repetition. That **is** nice. But there is
-still repetition.  Repeating yourself will cost you time, both now and
-later, and potentially introduce some nasty bugs. When it comes to
-repetition in code: Don't.
+But this isn't very *nice*. Yes, by using a function, you have reduced a substantial amount of repetition. That **is** nice. But there is still repetition. Repeating yourself will cost you time, both now and later, and potentially introduce some nasty bugs. When it comes to repetition in code: ***Don't***.
 
 <blockquote class="twitter-tweet" lang="en"><p>The more code I read, the more I realize the need to keep repeating: Keep it DRY! Don&#39;t. Repeat. Yourself. <a href="http://t.co/8lDtck2jZO">http://t.co/8lDtck2jZO</a></p>&mdash; Ben Simo (@QualityFrog) <a href="https://twitter.com/QualityFrog/statuses/363789702458904577">August 3, 2013</a></blockquote>
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-The nice way of repeating elements of code is to use a loop of some
-sort. A loop is a coding structure that reruns the same bit of code
-over and over, but with only small fragments differing between
-runs. In R there is a whole family of looping functions, each with
-their own strengths.
+The nice way of repeating elements of code is to use a loop of some sort. A loop is a coding structure that reruns the same bit of code over and over, but with only small fragments differing between runs. In R there is a whole family of looping functions, each with their own strengths.
 
-## The split-apply-combine pattern and `plyr` package
+## R's built-in apply library
 
-By now you may have recognised that most operations that involve
-looping are instances of the *split-apply-combine* strategy (this term
-and idea comes from the prolific [Hadley Wickham](http://had.co.nz/),
-who coined the term in [this
-paper](http://vita.had.co.nz/papers/plyr.html)).  You start with a
-bunch of data.  Then you then **Split** it up into many smaller
-datasets, **Apply** a function to each piece, and finally **Combine**
-the results back together.
+R has a list of built-in functions for repeating things. This includes a range of functions that allow you to apply some function to a series of objects (eg. vectors, matrices, dataframes or files). This is called the apply family, and includes: `lapply`,  `sapply`,  `tapply`, `aggregate`, `mapply`, `apply`.
 
-Some data arrives already in its pieces - e.g. output files from from
-a leaf scanner or temperature machine. Your job is then to analyse
-each bit, and put them together into a larger data set.
+Each repeats a function or operation on a series of elements, but they differ in the data types they accept and return.
 
-Sometimes the combine phase means making a new data frame, other times it might
-mean something more abstract, like combining a bunch of plots in a report.
+
+## The split-apply-combine pattern
+
+By now you may have recognised that most operations that involve looping are instances of the *split-apply-combine* strategy (this term and idea comes from the prolific [Hadley Wickham](http://had.co.nz/), who coined the term in [this
+paper](http://vita.had.co.nz/papers/plyr.html)). You start with a bunch of data. Then you then **Split** it up into many smaller datasets, **Apply** a function to each piece, and finally **Combine** the results back together.
+
+Some data arrives already in its pieces - e.g. output files from from a leaf scanner or temperature machine. Your job is then to analyse each bit, and put them together into a larger data set.
+
+Sometimes the combine phase means making a new data frame, other times it might mean something more abstract, like combining a bunch of plots in a report. 
 
 Either way, the challenge for you is to identify the pieces that remain the same between different runs of your function, then structure your analysis around that.
 
 ![Split apply combine](splitapply.png)
 
-## R's built-in  apply library
 
-R has a list of built-in functions for repeating things. This includes a range of functions that allow you to apply some function
-to a series of objects (eg. vectors, matrices, dataframes or files). This is called the apply family, and includes: `lapply`,  `sapply`,  `tapply`, `aggregate`, `mapply`, `apply`.
-
-Each repeats a function or operation on a series of elements, but they
-differ in the data types they accept and return.
-
-## The plyr package
+## The `plyr` package
 
 While R's built in function do work, we're going to introduce you to another method for repeating things using the package [**plyr**](http://had.co.nz/plyr/). plyr is an R Package for Split-Apply-Combine workflows.  Its functional
 programming model encourages writing reusable functions which can be called
