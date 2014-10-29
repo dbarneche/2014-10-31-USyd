@@ -11,8 +11,6 @@ tutor: Diego & Dan
 
 **Materials**: If you have not already done so, please [download the lesson materials for this bootcamp](https://github.com/dbarneche/2014-10-31-USyd/raw/gh-pages/data/lessons.zip), unzip, then go to the folder `control-flow`, and open (double click) on the file `control-flow.Rproj` to open Rstudio.
 
-## Control flow
-
 Often when we're coding we want to control the flow of our actions. Control flow (or flow of control) is simply the order in which we code and have our statements evaluated. That can be done by setting things to happen only if a condition or a set of conditions are met. Alternatively, we can also set an action to be computed for a particular number of times. 
 
 ## Conditional statements
