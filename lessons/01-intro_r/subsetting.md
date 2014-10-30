@@ -28,6 +28,7 @@ x <- c(5.4, 6.2, 7.1, 4.8, 7.5)
 ```
 x[1]  
 x[c(3,1)]  
+x[1:4]  
 # We can duplicate indices  
 x[c(1, 1)]  
 # Real numbers are silently truncated to integers  
@@ -89,7 +90,7 @@ z[c("a", "d")]
 
 ## Subsetting lists
 
-Subsetting a list works in exactly the same way as subsetting an atomic vector. Subsetting a list with [ will always return a list: `[[`` and `$`, as described below, let you pull out the components of the list.
+Subsetting a list works in exactly the same way as subsetting an atomic vector. Subsetting a list with `[` will always return a list: `[[` and `$`, as described below, let you pull out the components of the list.
 
 ```
 x <- as.list(1:10)
