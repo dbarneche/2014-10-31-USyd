@@ -158,8 +158,10 @@ system.time(
 )
 ```
 
-###    user  system elapsed 
-###    5.510   0.588   6.098 
+```
+   user  system elapsed 
+   5.510   0.588   6.098 
+```
 
 That takes about five and a half seconds to run.  It turns out that most of that time is taken up with the concatenation step.  If we get rid of that step by allocating a vector of the correct size to start with and accessing elements of that vector directly, it runs much faster.
 
@@ -173,9 +175,10 @@ system.time(
   }
 )
 ```
-
-###   user  system elapsed 
-###   0.091   0.002   0.092 
+```
+   user  system elapsed 
+   0.091   0.002   0.092 
+```
 
 That took about 1/6 as long to do the same thing!  We can shave off even more time by removing the `calculation` variable and allocating the results of each step directly to the vector with no intermediaries.
 
@@ -188,8 +191,10 @@ system.time(
     }
 )
 ```
-###   user  system elapsed 
-###   0.077   0.001   0.078 
+```
+   user  system elapsed 
+   0.077   0.001   0.078 
+```
 
 This version even compares favorably with the execution time we achieve using apply!
 
@@ -198,8 +203,10 @@ system.time(
     sapply(seq_len(iter), function(x)sqrt(x + (x)/10))
 )
 ```
-###   user  system elapsed 
-###   0.071   0.001   0.072 
+```
+   user  system elapsed 
+   0.071   0.001   0.072 
+```
 
 ## Nested for loops
 
