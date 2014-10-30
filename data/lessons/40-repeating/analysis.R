@@ -14,7 +14,7 @@ strsplit('john-1978', split='-')
 strsplit('john-1978', split='-')[[1]]
 
 # use lapply to do the same at once 
-x  <-  c('john-1978', 'felix-2043', 'will-1600')
+x  <-  list('john-1978', 'felix-2043', 'will-1600')
 lapply(x, function(x)strsplit(x, split='-')[[1]])
 
 # a simplified version using sapply

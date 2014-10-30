@@ -175,7 +175,7 @@ x <- c(0.5, 0.7)
 x <- c(TRUE, FALSE)
 x <- c("a", "b", "c", "d", "e")
 x <- 9:100
-x <- c(i+0i, 2+4i)
+x <- c(1+0i, 2+4i)
 ```
 
 You can also create vectors as sequence of numbers

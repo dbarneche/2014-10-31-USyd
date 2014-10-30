@@ -254,7 +254,7 @@ x <- x + 1 #notice how RStudio updates its description of x on the top right tab
 
 The right hand side is fully evaluated before the assignment occurs.
 
-Variable names can contain letters, numbers, underscores and periods. The cannot start with a number. They cannot contain spaces at all. Different people use different conventions for long variable names, these include
+Variable names can contain letters, numbers, underscores and periods. They cannot start with a number nor contain spaces at all. Different people use different conventions for long variable names, these include
 
   * periods.between.words
   * underscores\_between_words
