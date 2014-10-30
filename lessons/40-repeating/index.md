@@ -214,14 +214,14 @@ Imagine that we want to analyse boxplots of a certain response per treatment. Us
 ```
 boxplot(data$lifeExp ~ data$continent)
 ```
-![plot of chunk box_plot1](figure/box_plot1.png)
+![plot of chunk box_plot1](figure/boxplot1.png)
 
 As you can see, R obviously has a built-in function for boxplots. It's nice but still doesn't look great. Plots in R are very powerful in terms of what you can control. Full control is dictated by arguments to the function `par` (check `?par` for details - the list is massive!). Most of these arguments can also be used directly as functions for other plotting functions such as `plot`, `boxplot`, `hist`, etc. See some of the changes below and try to find what they mean in the help function of `par`
 
 ```
 boxplot(data$lifeExp ~ data$continent, las=1, main='Global analysis of human life expectancy', xlab='', ylab='', ylim=c(20, 85))
 ```
-![plot of chunk box_plot2](figure/box_plot2.png)
+![plot of chunk box_plot2](figure/boxplot2.png)
 
 This looks very nice. Now, in order to achieve the main goal (apply this boxplot to all years), we can wrap that around using a function, and then use `plyr` to do the repetition for us. We could, for instance, make the main title also vary by year. Because what we're about to do involves multiple plots, we might as well open a [plotting device](https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/dev.html) and specify it's dimensions before hand, as well as how many plot panels we want printed in the device. See below
 
@@ -237,7 +237,7 @@ quartz(width=10, height=8) # dimensions of plotting device are given in 7 x 7 in
 par(mfrow=c(3,4), omi=rep(0.5, 4)) # mfrow sets the number of rows and columns of plotting panels; omi (outer margin in inches) creates an external margin (in inches) around the entire plotting device - it has four values (bottom, left, top, right).
 d_ply(gap, .(year), niceBoxPlot)
 ```
-![plot of chunk box_plot3](figure/box_plot3.png)
+![plot of chunk box_plot3](figure/boxplot3.png)
 
 This already looks pretty handy and nice. But we can improve it by making sure that all continent labels appear simultaneously (some are omitted because the label fonts are too big to display without overlapping them), and we could also drop the repetition of x and y labels, since they are fixed across all plots. To do that we will:
 
@@ -261,7 +261,7 @@ d_ply(gap, .(year), niceboxPlot)
 mtext("Continents", side=1, outer=TRUE) #side 1 means bottom; outer means relative to entire plotting device
 mtext("Life expectancy (years)", side=2, outer=TRUE) #side 2 means left
 ```
-![plot of chunk box_plot4](figure/box_plot4.png)
+![plot of chunk box_plot4](figure/boxplot4.png)
 
 ## Acknowledgements
 
