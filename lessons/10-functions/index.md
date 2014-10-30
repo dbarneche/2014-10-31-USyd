@@ -84,7 +84,7 @@ This is one of the main uses of functions: they isolate different variables with
 z <- 10
 number <- 1
 number <- double(z)
-number    # number is now 2
+number    # number is now 20
 ```
 
 Functions also let you forget about things you don't want to think about - we could have implemented `double` differently:
