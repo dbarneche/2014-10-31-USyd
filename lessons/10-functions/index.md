@@ -245,7 +245,7 @@ rescale <- function(x, r.out) {
 ```
 
 
-This code now does exactly the same thing as the previous block, but captures more of the *what* than the *how*.  We could completely rework the definition of `rescale` and this block of code will not change.
+The code below now does exactly the same thing as the previous block, but captures more of the *what* than the *how*.  We could completely rework the definition of `rescale` and this block of code will not change.
 
 
 ```r
@@ -261,7 +261,7 @@ In the original [gapminder plots](http://www.gapminder.org/world/#$majorMode=cha
 Here is a small named vector mapping continents to colours:
 
 ```r
-col.table <- c(Asia="tomato",
+colour.table <- c(Asia="tomato",
                Europe="chocolate4",
                Africa="dodgerblue2",
                Americas="darkgoldenrod1",
@@ -273,8 +273,8 @@ There are at least two ways of doing the map:
 
 
 ```r
-cols <- unname(col.table[match(data.1982$continent, names(col.table))])
-cols <- unname(col.table[data.1982$continent])
+continent.colours <- unname(colour.table[match(data.1982$continent, names(colour.table))])
+continent.colours <- unname(colour.table[data.1982$continent])
 ```
 
 
@@ -293,9 +293,9 @@ captures intent better.
 
 
 ```r
-colour <- colour.by.category(data.1982$continent, col.table)
+continent.colours <- colour.by.category(data.1982$continent, colour.table)
 cex <- rescale(sqrt(data.1982$pop), c(0.2, 10))
-plot(lifeExp ~ gdpPercap, data.1982, log="x", cex=cex, col='black', bg=colour, pch=21, lwd=0.5, las=1)
+plot(lifeExp ~ gdpPercap, data.1982, log="x", cex=cex, col='black', bg=continent.colours, pch=21, lwd=0.5, las=1)
 ```
 
 ![plot of chunk scaled_coloured](figure/scaled_coloured.png)
@@ -313,7 +313,7 @@ add.trend.line <- function(x, y, d, ...) {
 ```
 
 ```r
-plot(lifeExp ~ gdpPercap, data.1982, log="x", cex=cex, col='black', bg=col, pch=21, lwd=0.5, las=1)
+plot(lifeExp ~ gdpPercap, data.1982, log="x", cex=cex, col='black', bg=continent.colours, pch=21, lwd=0.5, las=1)
 add.trend.line("gdpPercap", "lifeExp", data.1982)
 add.trend.line("gdpPercap", "lifeExp", data.1982, lwd=2)
 add.trend.line("gdpPercap", "lifeExp", data.1982, lwd=2, lty=2, col="blue")
@@ -326,12 +326,12 @@ Now that we have this function, we can do all sorts of fun things with it:
 
 
 ```r
-plot(lifeExp ~ gdpPercap, data.1982, log="x", cex=cex, col='black', bg=col, pch=21, lwd=0.5, las=1)
-add.trend.line("gdpPercap", "lifeExp", data.1982[data.1982$continent == "Asia",], col=col.table["Asia"])
-add.trend.line("gdpPercap", "lifeExp", data.1982[data.1982$continent == "Africa",], col=col.table["Africa"])
-add.trend.line("gdpPercap", "lifeExp", data.1982[data.1982$continent == "Europe",], col=col.table["Europe"])
-add.trend.line("gdpPercap", "lifeExp", data.1982[data.1982$continent == "Americas",], col=col.table["Americas"])
-add.trend.line("gdpPercap", "lifeExp", data.1982[data.1982$continent == "Oceania",], col=col.table["Oceania"])
+plot(lifeExp ~ gdpPercap, data.1982, log="x", cex=cex, col='black', bg=continent.colours, pch=21, lwd=0.5, las=1)
+add.trend.line("gdpPercap", "lifeExp", data.1982[data.1982$continent == "Asia",], col=colour.table["Asia"])
+add.trend.line("gdpPercap", "lifeExp", data.1982[data.1982$continent == "Africa",], col=colour.table["Africa"])
+add.trend.line("gdpPercap", "lifeExp", data.1982[data.1982$continent == "Europe",], col=colour.table["Europe"])
+add.trend.line("gdpPercap", "lifeExp", data.1982[data.1982$continent == "Americas",], col=colour.table["Americas"])
+add.trend.line("gdpPercap", "lifeExp", data.1982[data.1982$continent == "Oceania",], col=colour.table["Oceania"])
 ```
 
 ![plot of chunk with_trend_lines](figure/with_trend_lines.png)
@@ -341,20 +341,20 @@ Which still looks a bit ugly.  Could be nicer with another function:
 
 
 ```r
-add.continent.trend.line <- function(x, y, d, continent, col.table, ...) {
-  add.trend.line(x, y, d[d$continent == continent,], col=col.table[continent], ...)
+add.continent.trend.line <- function(x, y, d, continent, colour.table, ...) {
+  add.trend.line(x, y, d[d$continent == continent,], col=colour.table[continent], ...)
 }
 ```
 
 
 
 ```r
-plot(lifeExp ~ gdpPercap, data.1982, log="x", cex=cex, col='black', bg=col, pch=21, lwd=0.5, las=1)
-add.continent.trend.line("gdpPercap", "lifeExp", data.1982, "Asia", col.table)
-add.continent.trend.line("gdpPercap", "lifeExp", data.1982, "Africa", col.table)
-add.continent.trend.line("gdpPercap", "lifeExp", data.1982, "Europe", col.table)
-add.continent.trend.line("gdpPercap", "lifeExp", data.1982, "Americas", col.table)
-add.continent.trend.line("gdpPercap", "lifeExp", data.1982, "Oceania", col.table)
+plot(lifeExp ~ gdpPercap, data.1982, log="x", cex=cex, col='black', bg=continent.colours, pch=21, lwd=0.5, las=1)
+add.continent.trend.line("gdpPercap", "lifeExp", data.1982, "Asia", colour.table)
+add.continent.trend.line("gdpPercap", "lifeExp", data.1982, "Africa", colour.table)
+add.continent.trend.line("gdpPercap", "lifeExp", data.1982, "Europe", colour.table)
+add.continent.trend.line("gdpPercap", "lifeExp", data.1982, "Americas", colour.table)
+add.continent.trend.line("gdpPercap", "lifeExp", data.1982, "Oceania", colour.table)
 ```
 
 ![plot of chunk with_trend_lines_function](figure/with_trend_lines_function.png)
@@ -378,7 +378,7 @@ f("Oceania")
 ![plot of chunk with_trend_lines_function_throwaway](figure/with_trend_lines_function_throwaway.png)
 
 
-One of the nice things about this sort of approach is that we've not really specified *how* things have happened.  So we're free to swap out the details.
+One of the nice things about this sort of approach is that we've not really specified *how* things have happened when we call the function.  So we're free to swap out the details.
 
 
 ```r
