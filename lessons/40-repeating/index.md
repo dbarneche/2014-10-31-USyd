@@ -242,10 +242,15 @@ d_ply(data, .(year), niceBoxPlot)
 This already looks pretty handy and nice. But we can improve it by making sure that all continent labels appear simultaneously (some are omitted because the label fonts are too big to display without overlapping them), and we could also drop the repetition of x and y labels, since they are fixed across all plots. To do that we will:
 
 1\. Modify the function `niceBoxPlot`  
+
  * Set arguments `xlab` and `ylab` to empty (i.e. `=''`)  
+
  * Ask R not to plot the continent labels by using setting argument `xaxt='n'`  
+
  * Include a label with rotated text (say, 45 degrees)  
+
 2\. Include x and y labels only once outside all plots using the function `mtext`  
+
 
 ```
 niceboxPlot  <-  function(data) {
