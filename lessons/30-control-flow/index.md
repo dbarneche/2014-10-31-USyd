@@ -109,44 +109,7 @@ Using the gapminder dataset, create a function called `subsetAndEvaluateLifeExp`
 
 In what years did the condition *life expectancy > 40* occur?
 
-## While loops - I don't know how far I'm going, but I'll recognise it when I get there
-
-Sometimes you will find yourself needing to repeat an operation until a certain condition is met, rather than doing it for a specific number of times.  In some cases you might be able to hack something together using a `for` loop, but usually you'd be much better off using a `while` loop instead.  `While` loops look and act a lot like `for` loops, but instead of saying: 
-
-```r
-for(iterator in set of values){
-  do a thing
-}
-```
-
-You instead say:
-
-```r
-while(this condition is true){
-  do a thing
-} 
-```
-
-Let's try an example, shall we?  We'll try to come up with some simple code that generates random numbers between 0 and 1 until it gets one that's less than 0.1.  
-
-```r
-while(z > 0.1){
-  z <- runif(1)
-  print(z)
-}
-```
-
-But wait, that doesn't work!  What's the problem?
-
-The problem is that we haven't defined `z`, and so the very first time the while loop's condition is checked (`z > 0.1`), `while` just says "Okay, that's not true so I'm not going to execute this block of code".  The same thing would have happened if we defined `z` to be anything less than 0.1.  Let's fix it.
-
-```r
-z <- 1
-while(z > 0.1){
-  z <- runif(1)
-  print(z)
-}
-```
+# Repeating operations
 
 ## For loops - when the order of operation is important
 
@@ -195,10 +158,8 @@ system.time(
 )
 ```
 
-```
 ###    user  system elapsed 
 ###    5.510   0.588   6.098 
-```
 
 That takes about five and a half seconds to run.  It turns out that most of that time is taken up with the concatenation step.  If we get rid of that step by allocating a vector of the correct size to start with and accessing elements of that vector directly, it runs much faster.
 
@@ -213,10 +174,8 @@ system.time(
 )
 ```
 
-```
 ###   user  system elapsed 
 ###   0.091   0.002   0.092 
-```
 
 That took about 1/6 as long to do the same thing!  We can shave off even more time by removing the `calculation` variable and allocating the results of each step directly to the vector with no intermediaries.
 
@@ -229,11 +188,8 @@ system.time(
     }
 )
 ```
-
-```
 ###   user  system elapsed 
 ###   0.077   0.001   0.078 
-```
 
 This version even compares favorably with the execution time we achieve using apply!
 
@@ -242,11 +198,8 @@ system.time(
     sapply(seq_len(iter), function(x)sqrt(x + (x)/10))
 )
 ```
-
-```
 ###   user  system elapsed 
 ###   0.071   0.001   0.072 
-```
 
 ## Nested for loops
 
@@ -255,12 +208,53 @@ We can use a for loop within another for loop to iterate over two things at once
 ```r
 for(i in 1:5){
   for(j in 1:5){
-  	print(paste(i,j))
+    print(paste(i,j))
   }
 }
 ```
 
 Note the variable scoping - `i` is visible from within the `j` loop.  What happens when we try to print `j` from outside the `j` loop?
+
+## While loops
+
+Sometimes you will find yourself needing to repeat an operation until a certain condition is met, rather than doing it for a specific number of times.  In some cases you might be able to hack something together using a `for` loop, but usually you'd be much better off using a `while` loop instead.  `While` loops look and act a lot like `for` loops, but instead of saying: 
+
+```r
+for(iterator in set of values){
+  do a thing
+}
+```
+
+You instead say:
+
+```r
+while(this condition is true){
+  do a thing
+} 
+```
+
+Let's try an example, shall we?  We'll try to come up with some simple code that generates random numbers between 0 and 1 until it gets one that's less than 0.1.  
+
+```r
+while(z > 0.1){
+  z <- runif(1)
+  print(z)
+}
+```
+
+But wait, that doesn't work!  What's the problem?
+
+The problem is that we haven't defined `z`, and so the very first time the while loop's condition is checked (`z > 0.1`), `while` just says "Okay, that's not true so I'm not going to execute this block of code".  The same thing would have happened if we defined `z` to be anything less than 0.1.  Let's fix it.
+
+```r
+z <- 1
+while(z > 0.1){
+  z <- runif(1)
+  print(z)
+}
+```
+
+## 
 
 ### Exercise
 
@@ -275,6 +269,8 @@ Let's say you want to know how many random numbers you need to draw until you ge
 Let's experiment!  See what the distribution looks like if you try to draw numbers under 0.1 for 100 repetitions.  What about 0.01?  Keep adding zeros (0.001, 0.0001, 0.00001).  What happens to the time it takes to execute your simulation?  Why?
 
 This demonstrates an important part of using loops in code - if you don't think clearly about what you're doing, they can take a long time to execute, or can even go on forever! 
+
+
 
 ## Loops in simulations
 
