@@ -1,20 +1,9 @@
-
-rescale <- function(x, r.out) {
-  p <- (x - min(x)) / (max(x) - min(x))
-  r.out[[1]] + p * (r.out[[2]] - r.out[[1]])
+niceBoxPlot  <-  function(data) {
+  boxplot(data$lifeExp ~ data$continent, las=1, main=unique(data$year), xlab='Continents', ylab='Life expectancy (years)', ylim=c(20, 85))
 }
 
-colour.by.category <- function(x, table) {
-  unname(table[x])
+niceboxPlotImproved  <-  function(data) {
+  boxplot(data$lifeExp ~ data$continent, las=1, main=unique(data$year), xlab='', ylab='', xaxt='n', ylim=c(20, 85))
+  text(1:5, 10, sort(unique(data$continent)), srt=45, xpd=NA, adj=c(1, 0.5))
 }
 
-add.trend.line <- function(x, y, d, ...) {
-  fit <- lm(d[[y]] ~ log10(d[[x]]))
-  abline(fit, ...)
-}
-
-pop.by.country.relative <- function(country, data, base.year=1952) {
-  dsub <- data[data$country == country, c("year", "pop")]
-  dsub$pop.rel <- dsub$pop / dsub$pop[dsub$year == base.year]
-  dsub
-}
