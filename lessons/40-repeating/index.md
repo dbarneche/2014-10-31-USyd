@@ -11,7 +11,6 @@ tutor: Diego
 
 **Materials**: If you have not already done so, please [download the lesson materials for this bootcamp](https://github.com/dbarneche/2014-10-31-USyd/raw/gh-pages/data/lessons.zip), unzip, then go to the folder `repeating`, and open (double click) on the file `repeating.Rproj` to open Rstudio.
 
-
 Previously we looked at how you can use functions to simplify your code. Ideally you have a function that performs a single operation, and now you want to use it many times to do the same operation on lots of different data. The naive way to do that would be something like this:
 
 ```r
@@ -32,12 +31,80 @@ The nice way of repeating elements of code is to use a loop of some sort. A loop
 
 R has a list of built-in functions for repeating things. This includes a range of functions that allow you to apply some function to a series of objects (eg. vectors, matrices, dataframes or files). This is called the apply family, and includes: `lapply`,  `sapply`,  `tapply`, `aggregate`, `mapply`, `apply`.
 
-Each repeats a function or operation on a series of elements, but they differ in the data types they accept and return.
+Each repeats a function or operation on a series of elements, but they differ in the data types they accept and return. Below, I'll present some simple examples on possible ways to use `tapply`, `apply` and `lapply` (notice that `sapply` is a simplified form of `lapply`, see `?sapply`).
 
+For an example, let's pull up gapminder dataset as before
+
+```r
+data <- read.csv("data/gapminder-FiveYearData.csv", stringsAsFactors=FALSE)
+```
+
+Imagine that we want to obtain the average life expectancy of all countries in the world on 1992. For that, we can use `tapply`. We first provide a vector (or column of array, matrix or data.frame) to be analysed (life expectancy in this case), and then the splitting category (countries), and finally we provide the function `mean`.
+
+```
+# check output
+averageLifeExp  <-  tapply(data$lifeExp[data$year == 1992], data$country[data$year == 1992], mean)
+```
+
+We could also calculate the square root of the average expectancy for each continent for every year present in the dataset. Notice that R does not have a built-in function for the square root of the average, so we'll have to create our own using the existing functions `sqrt` and `mean`.
+
+```
+# check output
+avgLifeExpPerContinentPerYear  <-  tapply(data$lifeExp, list(data$continent, data$year), function(x)sqrt(mean(x)))
+```
+
+Notice that `tapply` returned a matrix table, with rows containing the unique values of our first category provided in the category list, and columns with the second set of unique values. Whenever possible, `tapply` tries to simplify the output (e.g. an array or vector) because it's argument `simplify` is set to `TRUE` by default. If it had set it to `FALSE`, it would have returned a list instead. At first, the construct for the function `function(x)sqrt(mean(x))` may have looked weird to you. This is what we call [anonymous throwaway functions](http://adv-r.had.co.nz/Functional-programming.html), i.e., R evaluates the function, but it does not save it in your global environment, because it does not have an object (i.e. name) being attributed to it. Throwaway functions are really useful for small simple tasks such as the one above.
+
+Now, from the `avgLifeExpPerContinentPerYear` we could obtain the average values across all years for each one of the continents, i.e., averaging across rows. For that, use another function, `apply`. With `apply` we specify our table, the dimension to which we want to apply a function (i.e. rows or columns) and the function itself. `apply` is primarily designed to work with arrays and matrices, but it can also work with data.frames if the function specified is compatible with the nature (i.e. class) or your columns, otherwise it will probably return and error.
+
+```
+apply(avgLifeExpPerContinentPerYear, 1, mean)
+```
+
+```
+##   Africa Americas     Asia   Europe  Oceania 
+## 6.980064 8.031091 7.732961 8.476498 8.618643 
+```
+
+which is the same as using the built-in function `rowMeans`. `lapply` is a very handy function that can be applied to atomic vectors, data.frames and lists (in reality, you can also use it with matrices, but be careful). Imagine you have a vector of *names-year* and you want to split those based on `-`. You could use the function `strsplit`
+
+```
+# one-element example
+strsplit('john-1978', split='-')
+## [[1]]
+## [1] "john" "1978"
+
+# you can get rid of the list by
+strsplit('john-1978', split='-')[[1]]
+## [1] "john" "1978"
+
+# multiple-element example, use an lapply loop
+x  <-  c('john-1978', 'felix-2043', 'will-1600')
+lapply(x, function(x)strsplit(x, split='-')[[1]])
+## [[1]]
+## [1] "john" "1978"
+
+## [[2]]
+## [1] "felix" "2043" 
+
+## [[3]]
+## [1] "will" "1600"
+
+# a simplified version using sapply
+sapply(x, function(x)strsplit(x, split='-')[[1]])
+##      john-1978 felix-2043 will-1600
+## [1,] "john"    "felix"    "will"   
+## [2,] "1978"    "2043"     "1600"   
+```
+
+### Exercise
+
+1. Using R's built-in data `iris`, calculate the difference between max and min values of petal length for each species. 
+2. Using R's built-in data set `mtcars` create a vector with the brand of each one of the cars. ***Hint:*** rownames(mtcars) also returns a vector
 
 ## The split-apply-combine pattern
 
-By now you may have recognised that most operations that involve looping are instances of the *split-apply-combine* strategy (this term and idea comes from the prolific [Hadley Wickham](http://had.co.nz/), who coined the term in [this
+By now you may have recognised that many operations that involve looping are instances of the *split-apply-combine* strategy (this term and idea comes from the prolific [Hadley Wickham](http://had.co.nz/), who coined the term in [this
 paper](http://vita.had.co.nz/papers/plyr.html)). You start with a bunch of data. Then you then **Split** it up into many smaller datasets, **Apply** a function to each piece, and finally **Combine** the results back together.
 
 Some data arrives already in its pieces - e.g. output files from from a leaf scanner or temperature machine. Your job is then to analyse each bit, and put them together into a larger data set.
@@ -47,7 +114,6 @@ Sometimes the combine phase means making a new data frame, other times it might 
 Either way, the challenge for you is to identify the pieces that remain the same between different runs of your function, then structure your analysis around that.
 
 ![Split apply combine](splitapply.png)
-
 
 ## The `plyr` package
 
@@ -96,306 +162,106 @@ xxply(.data, .variables, .fun)
 
 ### Example
 
-For an example, let's pull up gapminder dataset as before
+Think about the example above using `tapply`. We input a dataframe that produced a matrix table `avgLifeExpPerContinentPerYear` with the square root of means of life expectancy per continents and years. Let's recreate it using one of plyr's functions
 
 ```r
-data <- read.csv("data/gapminder-FiveYearData.csv", stringsAsFactors=FALSE)
+avgLifeExpPerContinentPerYear  <-  ddply(data, .(continent, year), function(x)sqrt(mean(x$lifeExp)))
 ```
-
-Now, what is we want to know is the number of countries by continent. So let's make a function that takes a dataframe as input and returns the number of countries.
-
-**Why don't you try - hint, function unique**
-
-```r
-get.n.countries <- function(x) length(unique(x$country))
-get.n.countries(data)
-```
-
-So first do it hard way:
-
-```r
-data.new <- data[data$continent == "Asia",]
-Asia.n <- get.n.countries(data.new)
-
-data.new <- data[data$continent == "Africa",]
-Africa.n <- get.n.countries(data.new)
-
-data.new <- data[data$continent == "Europe",]
-Europe.n <- get.n.countries(data.new)
-
-data.new <- data[data$continent == "Oceania",]
-Oceania.n <- get.n.countries(data.new)
-
-data.new <- data[data$continent == "Americas",]
-Americas.n <- get.n.countries(data.new)
-
-n.countries <- c(Africa.n, Asia.n, Americas.n, Europe.n, Oceania.n)
-```
-
-Now here's the equivalent in plyr:
-
-```r
-daply(data, .(continent), get.n.countries)
-```
-
-Isn't that nice? A single line of code, easy to read.
 
 Let's look at what happened here
 
-- The `daply` function feeds in a `data.frame` (function starts with **d**) and returns an `array` (2nd letter is an **a**)
+- The `ddply` function feeds in a `data.frame` (function starts with **d**) and returns another `data.frame` (2nd letter is a **d**)
 - the first argument is the data we are operating on: `data`
-- the second argument indicates our split criteria `continent`
-- the third is the function to apply `get.n.countries`
+- the second argument indicates our split criteria `continent` and `year`
+- the third is the function to apply `function(x)sqrt(mean(x$lifeExp))`
 
-Instead of `daply` we could also use `ddply` of `dlply`. Which to use? You need to decide which type of output is most useful to you, i.e. a `list`, `array` or `data.frame`
+The great advantage of this approach over R's built-in `tapply` is the flexibility of outputs. For instance, instead of `ddply` we could also have used `daply` of `dlply`. Which to use? You need to decide which type of output is most useful to you, i.e. a `list`, `array` or `data.frame`. Try it yourself. Also, the plyr's notation is slightly cleaner and more intuitive.
 
-It's also possible to define the function in place as an [anonymous function](http://adv-r.had.co.nz/Functional-programming.html):
+We could also use plyr's functions to mimic our second calculation done with `apply` where we extracted the average values across continents. 
 
-```r
-ddply(data, .(continent), function(x) length(unique(x$country)) )
+```
+# return a vector
+daply(avgLifeExpPerContinentPerYear, .(continent), function(x)mean(x$V1))
+##   Africa Americas     Asia   Europe  Oceania 
+## 6.980064 8.031091 7.732961 8.476498 8.618643 
+
+# or a data.frame
+ddply(avgLifeExpPerContinentPerYear, .(continent), function(x)mean(x$V1))
+##   continent       V1
+## 1    Africa 6.980064
+## 2  Americas 8.031091
+## 3      Asia 7.732961
+## 4    Europe 8.476498
+## 5   Oceania 8.618643
 ```
 
 Finally, there's several ways we can represent the split argument:
 
-- using the funky plyr notation: `daply(data, .(continent), get.n.countries)`
-- as a character: `daply(data, "continent", get.n.countries)`
-- or as a formula: `daply(data, ~continent, get.n.countries)`.
-```
+- using the funky plyr notation: `daply(data, .(splitColumn), function)`
+- as a character: `daply(data, "splitColumn", function)`
+- or as a formula: `daply(data, ~splitColumn, function)`.
 
-**Now let's try another example**.
+### Exercise 
 
-We want to sum total population in a dataframe.
+Make a function that calculates the number of countries in the gapminder dataset. ***Hint:*** use function unique. Use plyr's function that will take a `data.frame` as input and return a `vector` as an output. Split the data by continent.
 
-First write the function:
-
-```r
-get.total.pop <- function(x) sum(x$pop)
-```
-Then apply it using `daply`, `ddply` and `dlaply`:
-
-```r
-ddply(data, .(continent), get.total.pop)
-```
-Anyone notice a problem here? Yes, the total population of the world is about 10 times too big because it's repeated every 5 years. So we need to add `year` to our list of splitting criteria
-
-```r
-ddply(data, .(continent, year), get.total.pop)
-```
-
-**You try**
-Next we want the maximum `gdpPercap` on each continent.
-
-```r
-ddply(data, .(continent, year), function(x) max(x$gdpPercap))
-```
-
-### An example returning a list
-
-Sometimes we want to return something that doesn't fit into a dataframe or vector; in that case you should return a list. so in this case we'll want to use `dlply` because we're putting a dataframe in and getting a list out.
-
-See if you can write a function that given a dataframe, returns a vector of countries.
-
-```r
-get.countries <- function(x) unique(x$country)
-```
-
-Now let's apply it to the whole dataset
-
-```r
-get.countries(data)
-```
-
-And then apply to each continent using `dlpy`
-
-```r
-countries <- dlply(data, .(continent), function(x) unique(x$country))
-```
-
-### Feed data into model one-by-one returning fits to a list of models
+### Using `plyr` to create quick visualization of multiple plots
 
 Ok, now it gets really fun.
 
-In each year, we want to fit a model for each continent on the relationship between life expectancy and gdp per capita (as we did in functions section).
+Imagine that we want to analyse boxplots of a certain response per treatment. Using the gapminder dataset, we could, for example, analyse the differences in life expectancy among continents for each year. Typically, the approach I take is to first create a nice boxplot script and than abstract away some of it's implementation by putting into a function. We can start as simple as
 
-First, see if you can write a function that given a data frame `x` fits a model to data
-
-```r
-model <- function(x){
-  lm(lifeExp ~ log10(gdpPercap), data=x)
-}
 ```
-
-Now let's try it on a subset of data
-
-```r
-fit <- model(data[data$year==1982 & data$continent =="Asia" ,])
+boxplot(data$lifeExp ~ data$continent)
 ```
-Ok, so let's apply it to all continents in all years:
+![plot of chunk box_plot1](figure/box_plot1.png)
 
-```r
-fitted.linear.model <- dlply(data, .(continent, year), model)
+As you can see, R obviously has a built-in function for boxplots. It's nice but still doesn't look great. Plots in R are very powerful in terms of what you can control. Full control is dictated by arguments to the function `par` (check `?par` for details - the list is massive!). Most of these arguments can also be used directly as functions for other plotting functions such as `plot`, `boxplot`, `hist`, etc. See some of the changes below and try to find what they mean in the help function of `par`
+
 ```
-
-The output `fitted.linear.model` is a list of fitted models, with same structure as `fit`. We can use the `coef` function to extract coefficients of a model :
-
-```r
-coef(fitted.linear.model[[1]])
-ldply(fitted.linear.model, coef)
+boxplot(data$lifeExp ~ data$continent, las=1, main='Global analysis of human life expectancy', xlab='', ylab='', ylim=c(20, 85))
 ```
+![plot of chunk box_plot2](figure/box_plot2.png)
 
-You probably want the R2 too right?
+This looks very nice. Now, in order to achieve the main goal (apply this boxplot to all years), we can wrap that around using a function, and then use `plyr` to do the repetition for us. We could, for instance, make the main title also vary by year. Because what we're about to do involves multiple plots, we might as well open a [plotting device](https://stat.ethz.ch/R-manual/R-devel/library/grDevices/html/dev.html) and specify it's dimensions before hand, as well as how many plot panels we want printed in the device. See below
 
-```r
-ldply(fitted.linear.model, function(x) summary(x)$r.squared)
 ```
-
-We could also alter our model function to return the desired output then call `ddply` to get a summary for models fitted by year and continent:
-
-```r
-model <- function(x){
-  fit <- lm(lifeExp ~ log10(gdpPercap), data=x)
-  data.frame(n=length(x$lifeExp), r2=summary(fit)$r.squared, a=coef(fit)[[1]], b=coef(fit)[[2]])
-}
-ddply(data, .(continent,year), model)
-```
-
-As a final extension, we could add the variables we want to fit to the function definition, so that we could fit other combinations.
-
-```r
-model <- function(d, x, y) {
-  fit <- lm( d[[y]] ~ log10(d[[x]]) )
-  data.frame(n=length(d[[y]]), r2=summary(fit)$r.squared,a=coef(fit)[1],b=coef(fit)[2])
-}
-ddply(data, .(continent,year), model, y="lifeExp", x="gdpPercap")
-ddply(data, .(continent,year), model, y="lifeExp", x="pop")
-```
-
-So there you have it - in just 6 lines we can fit about 120 linear models and return two tables summarising these models. That's why plyr rocks!
-
-### Simplifying plots with plyr
-
-We can also exploit `plyr`'s ability to repeat things when generating plots. In the section on functions we used a function to help us add trend lines by continent:
-
-```r
-add.trend.line <- function(x, y, d, ...) {
-  fit <- lm(d[[y]] ~ log10(d[[x]]))
-  abline(fit, ...)
-}
-```
-
-But we still had to run all this code to fit lines to each continent:
-
-```r
-data.1982 <- data[data$year == 1982,]
-
-col.table <- c(Asia="tomato", Europe="chocolate4", Africa="dodgerblue2", Americas="darkgoldenrod1", Oceania="green4")
-
-plot(lifeExp ~ gdpPercap, data.1982, log="x", cex=rescale(sqrt(data.1982$pop), c(0.2, 10)), col= colour.by.category(data.1982$continent, col.table), pch=21)
-plot(lifeExp ~ gdpPercap, data.1982, log="x", cex=cex, col=col, pch=21)
-add.trend.line("gdpPercap", "lifeExp", data.1982[data.1982$continent == "Asia",], col=col.table["Asia"])
-add.trend.line("gdpPercap", "lifeExp", data.1982[data.1982$continent == "Africa",], col=col.table["Africa"])
-add.trend.line("gdpPercap", "lifeExp", data.1982[data.1982$continent == "Europe",], col=col.table["Europe"])
-add.trend.line("gdpPercap", "lifeExp", data.1982[data.1982$continent == "Americas",], col=col.table["Americas"])
-add.trend.line("gdpPercap", "lifeExp", data.1982[data.1982$continent == "Oceania",], col=col.table["Oceania"])
-```
-
-That's a lot of typing that is really very similar, and the sort of thing that is (a) boring to type, (b) prone to errors, and (c) hard to change (e.g. if we wanted to run it on a different data set, or change which continents we ran it over etc).
-
-![plot of chunk repeating_manual](figure/repeating_manual.png)
-
-One way to avoid repetition is to pass the `add.trend.line` function into `d_ply`. The underscore in `d_ply` tells us that we don't want any output, we just want to run the function
-
-
-```r
-# recall functions and objects created in the functions lesson
-colour.by.category <- function(x, table) {
-  unname(table[x])
+niceBoxPlot  <-  function(data) {
+    boxplot(data$lifeExp ~ data$continent, las=1, main=unique(data$year), xlab='Continents', ylab='Life expectancy (years)', ylim=c(20, 85))
 }
 
-rescale <- function(x, r.out) {
-  p <- (x - min(x)) / (max(x) - min(x))
-  r.out[[1]] + p * (r.out[[2]] - r.out[[1]])
+# open a new device. Use windows() 
+# instead of quartz() if you're 
+# on a Windows machine
+quartz(width=10, height=8) # dimensions of plotting device are given in 7 x 7 inches by default
+par(mfrow=c(3,4), omi=rep(0.5, 4)) # mfrow sets the number of rows and columns of plotting panels; omi (outer margin in inches) creates an external margin (in inches) around the entire plotting device - it has four values (bottom, left, top, right).
+d_ply(gap, .(year), niceBoxPlot)
+```
+![plot of chunk box_plot3](figure/box_plot3.png)
+
+This already looks pretty handy and nice. But we can improve it by making sure that all continent labels appear simultaneously (some are omitted because the label fonts are too big to display without overlapping them), and we could also drop the repetition of x and y labels, since they are fixed across all plots. To do that we will:
+
+1\. Modify the function `niceBoxPlot`
+ * Set arguments `xlab` and `ylab` to empty (i.e. `=''`)
+ * Ask R not to plot the continent labels by using setting argument `xaxt='n'`
+ * Include a label with rotated text (say, 45 degrees)
+2\. Include x and y labels only once outside all plots using the function `mtext`
+
+```
+niceboxPlot  <-  function(data) {
+    boxplot(data$lifeExp ~ data$continent, las=1, main=unique(data$year), xlab='', ylab='', xaxt='n', ylim=c(20, 85))
+    text(1:5, 10, sort(unique(data$continent)), srt=45, xpd=NA, adj=c(1, 0.5))
 }
 
-col <- colour.by.category(data.1982$continent, col.table)
-cex <- rescale(sqrt(data.1982$pop), c(0.2, 10))
+# see `?text` and `par` to understand parameters used for `text`
 
-# now use function add.trend.line
-plot(lifeExp ~ gdpPercap, data.1982, log="x", cex=cex, col=col, pch=21)
-d_ply(data.1982, .(continent), function(x) add.trend.line("gdpPercap", "lifeExp", x, col=col.table[x$continent]))
+quartz(width=10, height=8)
+par(mfrow=c(3,4), omi=rep(0.5, 4))
+d_ply(gap, .(year), niceboxPlot)
+mtext("Continents", side=1, outer=TRUE) #side 1 means bottom; outer means relative to entire plotting device
+mtext("Life expectancy (years)", side=2, outer=TRUE) #side 2 means left
 ```
-
-![plot of chunk repeating_ply](figure/repeating_plyr.png)
-
-**Another example**
-Plyr really shines when there are many things to deal with at once.  For example, we plotted relative population growth by country for three countries before:
-
-```r
-pop.by.country.relative <- function(country, data, base.year=1952) {
-  dsub <- data[data$country == country, c("year", "pop")]
-  dsub$pop.rel <- dsub$pop / dsub$pop[dsub$year == base.year]
-  dsub
-}
-
-plot(pop.rel ~ year, pop.by.country.relative("India", data), type="o")
-lines(pop.rel ~ year, pop.by.country.relative("Australia", data), type="o", col="green4")
-lines(pop.rel ~ year, pop.by.country.relative("China", data), type="o", col="red")
-```
-
-But if we wanted to do this for, say, all the countries in Asia that'd be a lot of copy and paste.  With plyr this is easy. Let's make a function that plot's a growth function for all years within a dataset:
-
-```r
-add.growth.line <- function(x, base.year,...){
-	lines(x$year,x$pop / x$pop[x$year == base.year], type="o",...)
-}
-```
-We can then feed this into `d_ply` to generate  a plot for all countries
-
-```r
-plot(NA, type="n", xlim=range(data$year), ylim=c(1, 6), xlab="Year", ylab="Relative population size")
-d_ply( data[data$continent =="Asia" ,], .(country), function(x) add.growth.line(x, 1952))
-```
-![plot of chunk growth_ply](figure/growth_ply.png)
-
-And we could use the same approach to make plots for the entire world, colouring by continent
-
-```r
-plot(NA, type="n", xlim=range(data$year), ylim=c(1, 6), xlab="Year", ylab="Relative population size")
-d_ply(data, .(country), function(x) add.growth.line(x, 1952, col=col.table[x$continent]))
-```
-
-![plot of chunk growth_world](figure/growth_world.png)
-
-### Summarise
-
-Above we showed you how you can apply a function to your dataframe using the plyr package. But what if you want to apply a whole bunch of functions? For example, what if you want to find the `min`, `max`, `mean`, and `var` of each group - surely we don't have to run each one of these separately?
-
-There are two options for running multiple functions on a data frame:
-
-1. The first is to write your own "wrapper" function returning multiple outputs as a data frame, like we did in the the above section fitting models.
-2. The other option is to use the summarise function.
-
-Like `ddply`, `summarise` can be used to create a new data frame from another data frame. It's particularly useful when you want multiple outputs.
-
-For summaries of the whole dataset you can call summarise directly:
-
-```r
-summarise(data, pop.mean=sum(pop), pop.var=var(pop), pop.max=max(pop))
-```
-
-But if you want to split by groups, need to combine with `ddply`. All the functions you want to call are simply listed at the end as extra arguments:
-
-```r
-ddply(data, .(continent, year), summarise, pop.mean=sum(pop), pop.var=var(pop), pop.max=max(pop))
-```
-
-However, notice that the format of the functions is slightly different to if we were calling each directly with ddply:
-
-```r
-ddply(data, .(continent, year),  function(x) sum(x$pop))
-ddply(data, .(continent, year),  function(x) var(x$pop))
-ddply(data, .(continent, year),  function(x) max(x$pop))
-```
+![plot of chunk box_plot4](figure/box_plot4.png)
 
 ## Acknowledgements
 
