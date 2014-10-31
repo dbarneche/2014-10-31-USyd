@@ -1,12 +1,12 @@
-```{r,echo=FALSE,results="hide"}
+```{r echo=FALSE, results="hide"}
+library(knitr)
+library(plyr)
 opts_chunk$set(tidy=FALSE)
-library(testthat)
 source('../R/functions-analyses.R')
-test_dir('../tests')
-rm(list=ls())
+source('../R/functions-figures.R')
 ```
 
-# Examples from lesson #1 - Intro to R - presented by Diego Barneche  
+# Examples from lesson "Intro to R" - presented by Diego Barneche  
 
 ## Vector types
 
@@ -35,7 +35,7 @@ typeof(x)
 class(x)
 ```
 
-# Examples from lesson #2 - Writing functions - presented by Diego Barneche  
+# Examples from lesson "Writing functions" - presented by Dan Warren  
 
 ## Playing with the basics  
 When you write your function, you define it based on *arguments*  
@@ -72,81 +72,11 @@ sum(data.1982$gdpPercap) / length(data.1982$gdpPercap)
 ```
 Notice that repeating things may be problematic; first because it increases your chances of typos; second, if for some reason you change the name of your columns in `dat`, you will have to manually change all these names, which will be quite annoying.  
 
-# Examples from lesson #5 - Testing functions - presented by Gavin Simpson  
-We have seen how important it is to test your functions in R. We have used a very user-friendly packages called `testthat`, where most tests are expectations of a certain result/output:  
-
-## Example of test  
-```{r}
-#using function rescale as an example
-rescale <- function(x, r.out) {
-  if (length(r.out) != 2)
-    stop("Expected r.out to be length 2")
-  xr <- range(x, na.rm=TRUE)
-  p <- (x - min(xr)) / (max(xr) - min(xr))
-  r.out[[1]] + p * (r.out[[2]] - r.out[[1]])
-}
-
-#some of the possible tests for it
-library(testthat)
-test_that("Rescale gives expected range", {
-  x <- rnorm(20)
-  x[4] <- NA
-  r.out <- sort(runif(2))
-  ## Range is expected:
-  expect_that(range(rescale(x, r.out), na.rm=TRUE), equals(r.out))
-  ## Rescaling onto same range does not change the data:
-  expect_that(rescale(x, range(x, na.rm=TRUE)), equals(x))
-  
-  ## Rescaling onto a reversed range works
-  expect_that(range(rescale(x, rev(r.out)), na.rm=TRUE), equals(r.out))
-  ## And the output is what was expected:
-  expect_that(rescale(x, rev(r.out)),
-              equals(sum(r.out) - rescale(x, r.out)))
-})
-```
-
-# Examples from lessons #2 and #4 - Writing plot functions and looping - presented by Diego Barneche and Gavin Simpson  
+# Examples from lessons "Control Flow & Repeating things" - Writing plot functions and looping - presented by Dan Warren & Diego Barneche  
 
 ## Making a plot  
-```{r, echo=FALSE}
-linear.rescale  <-  function(x, range) {
-    p  <-  (x - min(x)) / (max(x) - min(x))
-    range[[1]] + p * (range[[2]] - range[[1]])
-}
-
-colour.by.category <- function(things, table) {
-    unname(table[things])
-}
-
-add.trend.line <- function(x, y, d, ...) {
-  lx  <-  log10(d[[x]])
-  fit <-  lm(d[[y]] ~ lx)
-  xr  <-  range(lx)
-  lines(10^xr, predict(fit, list(lx=xr)), ...)
-}
-
-my.plot  <-  function(year, data, cols) {
-    data.year  <-  data[data$year == year, ]
-    col       <-  colour.by.category(data.year$continent, cols)
-    cex       <-  linear.rescale(sqrt(data.year$pop), range=c(0.2,10))
-    plot(lifeExp ~ gdpPercap, data.year, las=1, xlab='GDP per capta', ylab='Life expectancy', cex=cex, col='black', bg=col, pch=21, log="x", xlim=c(240,114000), ylim=c(20,85), main=unique(data.year$year))
-    for(continent in unique(data.year$continent)) {
-        add.trend.line("gdpPercap", "lifeExp",
-                       d=data.year[data.year$continent == continent,],
-                       col=cols[[continent]])
-    }
-}
-```
-```{r}
-col.table  <-  c(Asia='tomato',
-                 Europe='chocolate4',
-                 Africa='dodgerblue2',
-                 Americas='darkgoldenrod1',
-                 Oceania='green4')
-
-for (year in unique(data$year))
-    my.plot(year, data, col.table)
-
+```{r echo=FALSE, fig.width=10, fig.height=8, message=FALSE, warning=FALSE}
+allNiceBoxPlots(data)
 ```
 
 [id]: https://raw.github.com/dbarneche/2014-07-14-Dalhousie/gh-pages/data/lessons/10-functions/gapminder-FiveYearData.csv
