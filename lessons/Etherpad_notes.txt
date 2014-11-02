@@ -1,0 +1,209 @@
+# Welcome to the Software Carpentry Bootcamp at University of Sydney!
+
+# Please make sure that you write down your name in the blank space on the upper right corner - this will help is identify the different people. 
+
+# Here we will:
+# 1. Communicate among ourselves using the chat area (lower right corner);
+# 2. Instructors will paste the code they are typing on the screen;
+# 3. Share useful links;
+
+# This space is for everybody to use, feel free to add related content, fix typos and so forth. We recommend you to save a personal copy of the entire session as a text file for your reference at the end of each day.
+
+# The latest version can be downloaded at 
+# https://etherpad.mozilla.org/ep/pad/view/ro.VHVGca2Ji/latest
+# However this is likely to be taken down after a couple of weeks without use. Alternatively, you can download it from our bootcamp page at 
+# http://dbarneche.github.io/2014-10-31-USyd/lessons/Etherpad_notes.txt
+
+# If software install doesn't work, try setting the proxy:
+# Sys.setenv(http_proxy="web-cache-ext.usyd.edu.au:8080")
+
+# TOMORROW AT 9am WE ARE IN building adjacent to today to the south, the Eastern Avenue building.  The room is Seminar Room 312, third floor.
+
+# New "notepad":
+# CMD + Shift + N
+
+# Run selected code:
+# CMD + Enter
+
+
+# Basic arithmetic exercises
+# Compute the difference between 2014 and the year you started at university. Given your age, calculate the percentage of time in your life that you spent at university
+
+# Subsetting exercises - fix the following:
+mtcars[mtcars$cyl = 4, ]
+mtcars[mtcars$cyl = 4 | 6, ]
+
+set.seed(10)
+dat  <-  data.frame(response=rnorm(30, mean=rep(c(2, 5, 10), each=10), sd=rep(0.1, 30)), factors=rep(LETTERS[1:3], each=10))
+mod  <-  aov(response ~ factors, data = dat)
+# Extract the residual standar error
+# The answer - you have to calculate it, it's not built in to the output. The residual variance (the variance of the residuals!) appears in the anova table as the "residual mean square", which was 0.004906484. Thus the residual standard error (the standard deviation of the residuals) is sqrt(0.004906484) =  0.0700463
+
+sqrt(summary(mod)[[1]][['Mean Sq']][2])
+
+# FUNCTIONS
+# Download the data
+# https://github.com/dbarneche/2014-10-31-USyd/raw/gh-pages/data/lessons.zip
+
+data       <-  read.csv("gapminder-FiveYearData.csv", stringsAsFactors=FALSE)
+data.1982  <-  data[data$year == 1982, ]
+
+my.mean  <-  function(x) {
+    sum(x) / length(x)
+}
+
+my.skew  <-  function(x) {
+  y  <-  (x - my.mean(x))^3
+  (sum(y) * 1/(length(x) - 2))/(my.var(x)^(3/2))
+}
+
+# Function Exercise 1:
+# Write a function that takes two numbers and does the following:
+# Print both numbers
+# Print the sum of the numbers
+# Print log of x using base y
+# Return the phrase "writing functions is easy"
+
+# Conditional statements
+if(any(y)) {
+  stop(paste0(paste0(x[y], collapse=' and'), ' found in x'))
+}
+
+# Exercise
+# Using the gapminder dataset
+# 1. create a function called subsetAndEvaluateLifeExp;
+# 2. It subsets the data to a given year and continent, a
+# 3. It returns the average population size among countries if their life expectancy are all above 40 years, otherwise return a message saying what countries had their life expectancy below 40 years. 
+# 4. Evaluate this function for Asia in 1967, 1977, 1987, 1997 and 2007. Hint: use the function subset within your function to subset the data - type ?subset on the console for examples. In what years did the condition life expectancy > 40 occur?
+
+# Possible solution - save it in R/functions.R
+subsetAndEvaluateLifeExp  <-  function(data, year, continent) {
+  data     <-  data[data$year == year & data$continent == continent, ]
+  lifeExp  <-  data$lifeExp > 40
+  if(all(lifeExp)) {
+    mean(data$pop)
+  } else {
+    paste0(data$country[!lifeExp], collapse=' and ')
+  }  
+}
+
+# in analysis.R
+source("R/functions.R")
+
+data <- read.csv("data/gapminder-FiveYearData.csv", stringsAsFactors=FALSE)
+subsetAndEvaluateLifeExp(data, 1967, 'Asia')
+subsetAndEvaluateLifeExp(data, 1977, 'Asia')
+subsetAndEvaluateLifeExp(data, 1987, 'Asia')
+subsetAndEvaluateLifeExp(data, 1997, 'Asia')
+subsetAndEvaluateLifeExp(data, 2007, 'Asia')
+
+##### `for` and `while` loops
+vec  <-  numeric()
+system.time(
+  for(i in 1:50000) {
+    calculation  <-  sqrt(i + (i+1)/10)
+    vec  <-  c(vec, calculation)
+  }  )
+
+# While exercise:
+# Write a function called randbelow to draw random numbers from a uniform distribution until it gets a number below the threshold, returning the number of draws necessary
+
+randbelow  <-  function(threshold) {
+  x        <-  1 # first set x to 1
+  counter  <-  0
+  while(x > threshold) {
+  counter  <-  counter + 1
+  x        <-  runif(1)
+  }
+  counter
+}
+
+take.step  <-  function(threshold = 0.5) {
+    step  <-  0
+    if(runif(1) < threshold) {
+        step  <-  1
+    } else {
+        step  <-  -1
+    }
+    step
+}
+
+run.chain  <-  function(nsteps, ...) {
+    output     <-  numeric(length = nsteps + 1)
+    pos        <-  0
+    output[1]  <-  0
+    for(i in 1:nsteps) {
+        pos            <-  pos + take.step(...)
+        output[i + 1]  <-  pos
+    }
+    output
+}
+
+run.chain(100) 
+
+# Create a function that takes a threshold and a number of repetitions, and is going to repeat randbelow for that number of repetitions.  
+
+# It`s going to record the number of iterations it takes each time to get below the threshold, and return a histogram of the distribution.
+
+# Advanced R by Hadley Wickham - Highly recommend
+# http://adv-r.had.co.nz
+
+# Git cheatsheet:
+# https://training.github.com/kit/downloads/github-git-cheat-sheet.pdf
+# Git documentation (at least read chapter's 1 & 2) 
+# http://git-scm.com/doc
+
+# git global config options - all Platforms
+git config --global user.name "YourName"
+git config --global user.email "yourEmail@...com"
+git config --global color.ui "auto"
+
+# if you're on Windows
+git config --global core.autocrlf "true"
+git config --global core.editor "'C:/Program Files (x86)/Notepad++/notepad++.exe' -multiInst -notabbar -nosession -noPlugin"
+
+# if you're on a Mac/Linus
+git config --global core.autocrlf "input"
+git config --global core.editor "nano --tempfile" # setting an editor for git commands
+
+# On the Terminal / GitBash
+cd
+cd Desktop
+mkdir projectTest
+touch README.md 
+# open README.md file in your text editor and type:
+"whatever you want to type"
+# save and quit your text editor
+# On Terminal
+git init
+git status 
+git add README.md
+git commit -m "started project"
+# 1 file changed, 1 inserted
+
+# open README file -> type something -> save
+git status           # README appears in red -> uncommitted changes
+
+git add README.md       # OR     git add --all
+git commit -m "new changes added"
+
+git log         # there should be 2 lines in yellow with unique code
+git checkout XXXX        # roll back to previous committed version replace XXXX with beginning of unique code
+git checkout master     # roll forward to most recent version
+
+# Defining permanent prompting
+export PS1='\u@ \W: '
+
+# Defining colors
+export CLICOLOR=1
+export LSCOLORS=GxFxCxDxBxegedabagaced
+
+# one way of saving to pdf
+dir.create('output/figures',recursive=TRUE) #create output to put figures in
+pdf('output/figures/figure1.pdf', width=10, height =8) #create pdf, outline output location and name WITH .pdf, extension at end, set width etc. 
+par(mfrow=c(3,4), omi=rep(0.5, 4))
+d_ply(data, .(year), niceBoxPlot)
+mtext("Continents", side=1, outer=TRUE) #side 1 means bottom; outer means relative to entire plotting device
+mtext("Life expectancy (years)", side=2, outer=TRUE) #side 2 means left
+dev.off() #tells code reached end
+
